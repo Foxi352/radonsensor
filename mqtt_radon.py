@@ -41,8 +41,16 @@ import RPi.GPIO as GPIO
 class MQTT_publisher:
 
     def __init__(self, broker='127.0.0.1', port=1883):
+        """
+        Creates an instance of the MQTT class.
+
+        :param broker: MQTT broker hostname or ip address, default is localhost
+        :type broker: string
+        :param port: MQTT broker port. Default is 1883.
+        :type port: int
+        """
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Initializing MQTT publisher")
+        self.logger.debug("Initializing MQTT publisher")
         self.mqtt_broker = broker
         self.mqtt_port = port
         self.mqtt_topic = 'sensor/radon/value'
@@ -57,7 +65,8 @@ class MQTT_publisher:
         self._client.on_disconnect = self.on_disconnect
 
     def connect(self):
-        self.logger.debug("Connecting to MQTT broker")
+        """ Establish connection to MQTT broker """
+        self.logger.info("Connecting to MQTT broker")
         try:
             self._client.connect_async(self.mqtt_broker, self.mqtt_port, keepalive=60)
         except Exception as e:
@@ -300,7 +309,7 @@ def main():
             logger.info("ctrl-c detected, shutting down")
             break
         except Exception:
-            traceback.print_exc(file=sys.stdout)
+            raise
             break
 
     logger.debug("Stopping")
