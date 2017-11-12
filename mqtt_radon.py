@@ -20,9 +20,6 @@
 # pip3 install paho-mqtt pyserial
 
 """
-|  *** ATTENTION: This is early work in progress ***
-|  *** DO NOT USE IN PRODUCTION until you know what you are doing ***
-|
 This software runs on a Raspberry Pi (old v1 is ok). It connects to the FTLABS RD200M Radon sensor
 via serial port and to an MQTT broker via TCP. Measured values received vir serial port are simply forwarded
 to an MQTT Topic for all subscribers to consume.
@@ -74,15 +71,19 @@ class MQTT_publisher:
             exit(1)
 
     def loop_start(self):
+        """ Starts the MQTT event loop """
         self._client.loop_start()
 
     def loop_stop(self):
+        """ Stops the MQTT event loop """
         self._client.loop_stop()
 
     def disconnect(self):
+        """ Disconnects from MQTT broker """
         self._client.disconnect()
 
     def publish(self, value):
+        """ Publishes (sends) a value to the MQTT broker for subscribers to consume """
         self.logger.debug("Sending value '{}' to MQTT broker".format(value))
         (result, mid) = self._client.publish(self.mqtt_topic, value, 0, retain=True)
         if result == mqtt.MQTT_ERR_SUCCESS:
@@ -93,10 +94,12 @@ class MQTT_publisher:
             self.logger.warning("Message ID '{}' could not be sent, unknown error".format(mid))
 
     def on_connect(self, client, userdata, flags, rc):
+        """ MQTT Connected callback, does no do anything really usefull right now """
         self.logger.info("Connected to MQTT broker")
         self._is_connected = True
 
     def on_disconnect(self, client, userdata, flags):
+        """ MQTT Disconnected callback, does no do anything really usefull right now """
         self.logger.info("Disconnected from MQTT broker")
         self._is_connected = False
 
